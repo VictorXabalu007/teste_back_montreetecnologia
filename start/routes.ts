@@ -26,3 +26,15 @@ router.group(() => {
   router.post('/compras', [ComprasController, 'store'])
 })
 
+// Swagger Documentation
+router.get('/swagger.json', async () => {
+  const { default: AutoSwagger } = await import('adonis-autoswagger')
+  const { default: swaggerConfig } = await import('#config/swagger')
+  return AutoSwagger.default.json(router.toJSON(), swaggerConfig)
+})
+
+router.get('/docs', async () => {
+  const { default: AutoSwagger } = await import('adonis-autoswagger')
+  const { default: swaggerConfig } = await import('#config/swagger')
+  return AutoSwagger.default.ui('/swagger.json', swaggerConfig)
+})

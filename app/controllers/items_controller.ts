@@ -4,7 +4,9 @@ import { createItemValidator } from '#validators/item'
 
 export default class ItemsController {
   /**
-   * List all items
+   * @index
+   * @description Lista todos os itens disponíveis no catálogo.
+   * @responseBody 200 - [item]
    */
   async index({ response }: HttpContext) {
     const items = await Item.all()
@@ -12,7 +14,10 @@ export default class ItemsController {
   }
 
   /**
-   * Create a new item
+   * @store
+   * @description Cria um novo item no catálogo.
+   * @requestBody <createItemValidator>
+   * @responseBody 201 - item
    */
   async store({ request, response }: HttpContext) {
     const payload = await request.validateUsing(createItemValidator)

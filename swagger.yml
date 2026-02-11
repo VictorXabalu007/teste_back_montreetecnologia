@@ -1,0 +1,308 @@
+openapi: "3.0.0"
+info:
+  title: "API de Lista de Compras"
+  version: "1.0.0"
+  description: "API estruturada para gerenciar itens e realizar compras aleatórias usando a API do GitHub."
+components:
+  responses:
+    Forbidden:
+      description: "Access token is missing or invalid"
+    Accepted:
+      description: "The request was accepted"
+    Created:
+      description: "The resource has been created"
+    NotFound:
+      description: "The resource has been created"
+    NotAcceptable:
+      description: "The resource has been created"
+  securitySchemes:
+    BearerAuth:
+      type: "http"
+      scheme: "bearer"
+    BasicAuth:
+      type: "http"
+      scheme: "basic"
+    ApiKeyAuth:
+      type: "apiKey"
+      in: "header"
+      name: "X-API-Key"
+  schemas:
+    Any:
+      description: "Any JSON object not defined as schema"
+    PaginationMeta:
+      type: "object"
+      properties:
+        total:
+          type: "number"
+          example: 100
+          nullable: false
+        page:
+          type: "number"
+          example: 2
+          nullable: false
+        perPage:
+          type: "number"
+          example: 10
+          nullable: false
+        currentPage:
+          type: "number"
+          example: 3
+          nullable: false
+        lastPage:
+          type: "number"
+          example: 10
+          nullable: false
+        firstPage:
+          type: "number"
+          example: 1
+          nullable: false
+        lastPageUrl:
+          type: "string"
+          example: "/?page=10"
+          nullable: false
+        firstPageUrl:
+          type: "string"
+          example: "/?page=1"
+          nullable: false
+        nextPageUrl:
+          type: "string"
+          example: "/?page=6"
+          nullable: false
+        previousPageUrl:
+          type: "string"
+          example: "/?page=5"
+          nullable: false
+    Compra:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 845
+        item_id:
+          type: "number"
+          example: 625
+        comprador_github_login:
+          type: "string"
+          example: "Lorem Ipsum"
+        item:
+          $ref: "#/components/schemas/Item"
+          example: null
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "Compra (Model)"
+    Item:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 778
+        nome:
+          type: "string"
+          example: "Lorem Ipsum"
+        preco:
+          type: "number"
+          example: 750
+        qtd_atual:
+          type: "number"
+          example: 808
+        compras:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Compra"
+            example: null
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "Item (Model)"
+    User:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 408
+        full_name:
+          type: "string"
+          example: "John Doe"
+        email:
+          type: "string"
+          example: "johndoe@example.com"
+          format: "email"
+        created_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updated_at:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "User (Model)"
+    createCompraValidator:
+      type: "object"
+      properties:
+        item_id:
+          type: "number"
+          example: 373
+          required: true
+      example:
+        item_id: 373
+      description: "createCompraValidator (Validator)"
+    createItemValidator:
+      type: "object"
+      properties:
+        nome:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 3
+        preco:
+          type: "number"
+          example: 396
+          required: true
+        qtd_atual:
+          type: "number"
+          example: 368
+          required: true
+      example:
+        nome: "Lorem Ipsum"
+        preco: 396
+        qtd_atual: 368
+      description: "createItemValidator (Validator)"
+paths:
+  /:
+    get:
+      summary: "route"
+      description: "\n\n __ - ****"
+      parameters: []
+      tags:
+        - ""
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+  /itens:
+    get:
+      summary: "Get a list of itens (index)"
+      description: "Returns **200** (OK) as **text/plain**\n\n _app/controllers/items_controller.ts_ - **index**"
+      parameters: []
+      tags:
+        - "ITENS"
+      responses:
+        200:
+          content:
+            text/plain:
+              example: "[item]"
+          description: "Returns **200** (OK) as **text/plain**"
+      security: []
+    post:
+      summary: "Create itens (store)"
+      description: "Returns **201** (Created) as **text/plain**\n\n _app/controllers/items_controller.ts_ - **store**"
+      parameters: []
+      tags:
+        - "ITENS"
+      responses:
+        201:
+          content:
+            text/plain:
+              example: "item"
+          description: "Returns **201** (Created) as **text/plain**"
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createItemValidator"
+            example:
+              nome: "Lorem Ipsum"
+              preco: 396
+              qtd_atual: 368
+  /compras:
+    get:
+      summary: "Get a list of compras (index)"
+      description: "Returns **200** (OK) as **text/plain**\n\n _app/controllers/compras_controller.ts_ - **index**"
+      parameters: []
+      tags:
+        - "COMPRAS"
+      responses:
+        200:
+          content:
+            text/plain:
+              example: "[compra]"
+          description: "Returns **200** (OK) as **text/plain**"
+      security: []
+    post:
+      summary: "Create compras (store)"
+      description: "Returns **201** (Created) as **text/plain**\n\n _app/controllers/compras_controller.ts_ - **store**"
+      parameters: []
+      tags:
+        - "COMPRAS"
+      responses:
+        201:
+          content:
+            text/plain:
+              example: "compra"
+          description: "Returns **201** (Created) as **text/plain**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error: "Estoque insuficiente"
+                  message: "string"
+              example:
+                error: "Estoque insuficiente"
+                message: "string"
+          description: "Returns **400** (Bad Request) as **application/json**"
+        404:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error: "Item não encontrado"
+                  message: "string"
+              example:
+                error: "Item não encontrado"
+                message: "string"
+          description: "Returns **404** (Not Found) as **application/json**"
+        503:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error: "Serviço indisponível"
+                  message: "A API do GitHub está fora do ar."
+              example:
+                error: "Serviço indisponível"
+                message: "A API do GitHub está fora do ar."
+          description: "Returns **503** (Service Unavailable) as **application/json**"
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createCompraValidator"
+            example:
+              item_id: 373
+tags:
+  - name: "ITENS"
+    description: "Everything related to ITENS"
+  - name: "COMPRAS"
+    description: "Everything related to COMPRAS"

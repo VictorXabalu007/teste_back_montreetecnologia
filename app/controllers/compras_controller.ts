@@ -7,7 +7,9 @@ import db from '@adonisjs/lucid/services/db'
 
 export default class ComprasController {
   /**
-   * List all purchases with item details
+   * @index
+   * @description Lista todas as compras realizadas, incluindo os detalhes do item comprado.
+   * @responseBody 200 - [compra]
    */
   async index({ response }: HttpContext) {
     const compras = await Compra.query().preload('item')
@@ -15,12 +17,17 @@ export default class ComprasController {
   }
 
   /**
-   * Create a new purchase
+   * @store
+   * @description Realiza uma nova compra de um item. Atribui um comprador aleatório via API do GitHub e atualiza o estoque.
+   * @requestBody <createCompraValidator>
+   * @responseBody 201 - compra
+   * @responseBody 404 - {"error": "Item não encontrado", "message": "string"}
+   * @responseBody 400 - {"error": "Estoque insuficiente", "message": "string"}
+   * @responseBody 503 - {"error": "Serviço indisponível", "message": "A API do GitHub está fora do ar."}
    */
   async store({ request, response }: HttpContext) {
     const payload = await request.validateUsing(createCompraValidator)
 
-    // Find the item first
     const item = await Item.find(payload.item_id)
 
     if (!item) {
@@ -30,7 +37,6 @@ export default class ComprasController {
       })
     }
 
-    // Check stock availability
     if (item.qtdAtual <= 0) {
       return response.badRequest({
         error: 'Estoque insuficiente',
@@ -38,7 +44,6 @@ export default class ComprasController {
       })
     }
 
-    // Get random GitHub user
     const githubService = new GithubService()
     let compradorLogin: string
 
@@ -51,13 +56,10 @@ export default class ComprasController {
       })
     }
 
-    // Use transaction to ensure data consistency
     const compra = await db.transaction(async (trx) => {
-      // Decrease item quantity
       item.qtdAtual -= 1
       await item.useTransaction(trx).save()
 
-      // Create purchase
       const newCompra = await Compra.create(
         {
           itemId: item.id,
@@ -66,7 +68,6 @@ export default class ComprasController {
         { client: trx }
       )
 
-      // Load item relationship
       await newCompra.load('item')
 
       return newCompra
@@ -74,5 +75,4 @@ export default class ComprasController {
 
     return response.created(compra)
   }
-
 }
