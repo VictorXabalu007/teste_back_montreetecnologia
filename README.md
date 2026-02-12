@@ -21,6 +21,12 @@ Esta API foi desenvolvida como parte de um desafio técnico para demonstrar habi
 - **VineJS** - Validação de dados
 - **Japa** - Framework de testes
 
+## 📋 Pré-requisitos
+
+Antes de começar, certifique-se de ter instalado em sua máquina:
+- **Node.js v20.6.0** ou superior
+- **npm** (geralmente vem com o Node.js)
+
 ## 📦 Instalação
 
 ```bash
@@ -33,6 +39,9 @@ npm install
 
 # Configure o arquivo .env
 cp .env.example .env
+
+# Gere a APP_KEY
+node ace generate:key
 
 # Execute as migrations
 node ace migration:run
@@ -51,6 +60,15 @@ A API possui documentação interativa via Swagger. Para acessar:
 2. Acesse: `http://localhost:3333/docs`
 
 Lá você encontrará todos os detalhes dos endpoints, esquemas de dados e poderá testar as requisições diretamente pelo navegador.
+
+### 💜 Insomnia
+
+Na raiz do projeto, você encontrará o arquivo `insomnia_collection.json`. Ele contém todas as rotas da API configuradas e prontas para uso.
+
+Para utilizar:
+1. Abra o [Insomnia](https://insomnia.rest/).
+2. Clique em **Import** -> **File**.
+3. Selecione o arquivo `insomnia_collection.json`.
 
 ## 🔌 Endpoints da API
 
@@ -182,6 +200,15 @@ backend/
 │   └── routes.ts        # Definição de rotas
 └── tests/
     └── functional/      # Testes funcionais
+```
+
+## 🛠️ O Comando Ace
+
+O AdonisJS utiliza um utilitário de linha de comando chamado **Ace**. Você verá muitos comandos começando com `node ace`. Ele é o "canivete suíço" do framework, servindo para gerar modelos, controladores, gerenciar o banco de dados e muito mais.
+
+Para ver todos os comandos disponíveis, você pode rodar:
+```bash
+node ace --help
 ```
 
 ## 🔧 Variáveis de Ambiente
